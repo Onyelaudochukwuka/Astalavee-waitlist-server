@@ -1,6 +1,6 @@
 import { CourierClient } from "@trycourier/courier";
 require("dotenv").config();
-import type { Request, Response, Router } from "express";
+import type { Request, Response } from "express";
 import { ValidationError, validationResult } from "express-validator";
 import { Waitlist } from "../model/Waitlist";
 interface Res {
@@ -18,7 +18,7 @@ interface Req {
     contentCreator: boolean;
 }
 
-exports.SendMail = async (req: Request<Req>, res: Response<Res>) => {
+exports.joinWaitlist = async (req: Request<Req>, res: Response<Res>) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res
