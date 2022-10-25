@@ -15,6 +15,6 @@ const app: Application = express();
 app.use(cors());
 app.use(express.json());
 // Define routes
-app.use("/message", require("./routes/message"));
+app.use("/user", require("./routes/message"));
 const PORT = 3000 || process.env.PORT;
 app.listen(PORT, () => console.log(`port started on Port ${PORT}`));
