@@ -16,7 +16,7 @@ const app: Application = express();
 app.use(cors());
 app.use(express.json());
 // Define routes
-app.use("/user", require("./routes/message"));
+app.use("/user", require("./routes/waitlist"));
 app.all("*", function (req, res, next) {
     res.status(404).json({ errors: [{ message: "Route not found" }] });
 });
