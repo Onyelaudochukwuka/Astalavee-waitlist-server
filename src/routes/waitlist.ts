@@ -3,7 +3,7 @@ require("dotenv").config();
 import { Request, Response, Router } from "express";
 import { body } from "express-validator";
 const router = Router();
-const { SendMail, sendMessageOnly } = require("../controllers/message");
+const { SendMail, sendMessageOnly } = require("../controllers/waitlist");
 router.post(
     "/join-waitlist",
     body("message", "A message from the user is required").isString(),
