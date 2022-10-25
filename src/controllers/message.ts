@@ -2,6 +2,7 @@ import { CourierClient } from "@trycourier/courier";
 require("dotenv").config();
 import type { Request, Response, Router } from "express";
 import { ValidationError, validationResult } from "express-validator";
+import { Waitlist } from "../model/Waitlist";
 interface Res {
     message: string;
     success: boolean;
@@ -11,18 +12,10 @@ interface Res {
     errors?: ValidationError[];
 }
 interface Req {
-    message: string;
-    user_email: string;
-    first_name: string;
-    last_name: string;
-    title: string;
-    my_email: string;
-}
-interface MessageOnlyReq {
-    message: string;
-    user_email: string;
-    user_name: string;
-    my_email: string;
+    name: string;
+    email: string;
+    affiliateMarketer: boolean;
+    contentCreator: boolean;
 }
 
 exports.SendMail = async (req: Request<Req>, res: Response<Res>) => {
@@ -36,24 +29,32 @@ exports.SendMail = async (req: Request<Req>, res: Response<Res>) => {
                 message: "Invalid data",
             });
     }
-    const { message, user_email, first_name, last_name, title, my_email }: Req =
-        req.body;
+    const { name, email, affiliateMarketer, contentCreator }: Req = req.body;
     const courier = CourierClient({
         authorizationToken: process.env.COURIER_AUTH_TOKEN,
     });
-
-    const data = await courier.send({
-        message: {
-            to: {
-                email: my_email,
-            },
-            content: {
-                title: title,
-                body: `Hi, I'm ${first_name} ${last_name},\n ${message} \n Here's my email: ${user_email} \n you can contact me on this email.`,
-            },
-        },
+    const waitlist = await Waitlist.create({
+        name,
+        email,
+        affiliateMarketer,
+        contentCreator,
     });
-    return res
-        .status(200)
-        .json({ success: true, message: "Message sent successfully", data });
+    waitlist.save().then(async () => {
+        await courier.send({
+            message: {
+                to: {
+                    email
+                },
+                content: {
+                    title: "Waitlist confirmation",
+                    body: `Welcome to astalavee ${name}`,
+                },
+            },
+        }).then(() => {
+
+        });;
+        return res
+            .status(200)
+            .json({ success: true, message: "Message sent successfully" });
+    })
 };
