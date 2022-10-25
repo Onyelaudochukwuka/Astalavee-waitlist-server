@@ -17,6 +17,8 @@
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "express-validator": "^6.14.2",
+    "mongodb": "^4.11.0",
+    "mongoose": "^6.7.0",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
