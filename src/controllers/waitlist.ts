@@ -49,7 +49,7 @@ exports.joinWaitlist = async (req: Request<Req>, res: Response<Res>) => {
                 waitlist.save().then(() => {
                     return res
                         .status(200)
-                        .json({ success: true, message: "Message sent successfully" });
+                        .json({ success: true, message: "User Subscribed successfully" });
                 });
             });
         }
