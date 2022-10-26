@@ -19,9 +19,7 @@ export const addMemberTopList = async (
         },
     });
 
-    console.log(
-        `Successfully added contact as an audience member. The contact's id is ${response.id}.`,
-    );
+    return response.id;
 };
 
 export default addMemberTopList;
