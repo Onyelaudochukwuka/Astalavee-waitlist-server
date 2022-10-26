@@ -22,4 +22,4 @@ const waitlistSchema = new Schema({
         default: Date.now,
     }
 });
-export const Waitlist = model('Group', waitlistSchema);
+export const Waitlist = model('Waitlist', waitlistSchema);
