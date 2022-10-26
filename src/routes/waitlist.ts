@@ -1,6 +1,5 @@
-import { CourierClient } from "@trycourier/courier";
 require("dotenv").config();
-import { Request, Response, Router } from "express";
+import { Router } from "express";
 import { body } from "express-validator";
 const router = Router();
 const { joinWaitlist } = require("../controllers/waitlist");
