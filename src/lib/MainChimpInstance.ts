@@ -10,6 +10,7 @@ export const addMemberTopList = async (
     firstName: string,
     lastName: string,
 ) => {
+    console.log(await mailchimp.lists.getList("04fa38c0c1"))
     const response = await mailchimp.lists.addListMember("04fa38c0c1", {
         email_address: email,
         status: "subscribed",
