@@ -1,6 +1,12 @@
 import { Schema, model } from "mongoose";
-// create waitlist schema
-const waitlistSchema = new Schema({
+interface WaitlistSchema {
+    name: string;
+    email: string;
+    affiliateMarketer: boolean;
+    contentCreator: boolean;
+    date: unknown;
+}
+const waitlistSchema = new Schema<WaitlistSchema>({
     name: {
         type: String,
         required: true,
