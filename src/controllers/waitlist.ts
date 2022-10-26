@@ -3,13 +3,7 @@ require("dotenv").config();
 import type { Request, Response } from "express";
 import { ValidationError, validationResult } from "express-validator";
 import { Waitlist } from "../model/Waitlist";
-import sgMail from "@sendgrid/mail";
-const sendGridApiKey = process.env.SENDGRID_API_KEY;
-if (!sendGridApiKey) {
-    throw new Error("sendgridkey missing missing");
-}
-sgMail.setApiKey(sendGridApiKey);
-
+import {addMemberTopList} from "../lib/MainChimpInstance";
 interface Res {
     message: string;
     success: boolean;
@@ -26,6 +20,7 @@ interface Req {
 }
 
 exports.joinWaitlist = async (req: Request<Req>, res: Response<Res>) => {
+    run();
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res
@@ -37,12 +32,16 @@ exports.joinWaitlist = async (req: Request<Req>, res: Response<Res>) => {
             });
     }
     const { name, email, affiliateMarketer, contentCreator }: Req = req.body;
-    const wait = await Waitlist.find({ email });
+    const wait = await Waitlist.find({ name });
+    await Waitlist.deleteMany({});
     if (wait.length > 0) {
         return res.status(400).json({ success: false, message: "user already added to waitlist" });
     }
     else {
         if (affiliateMarketer || contentCreator) {
+            const courier = CourierClient({
+                authorizationToken: process.env.COURIER_AUTH_TOKEN,
+            });
       const waitlist = await Waitlist.create({
                 name,
                 email,
@@ -61,10 +60,11 @@ exports.joinWaitlist = async (req: Request<Req>, res: Response<Res>) => {
                         },
                     },
                 }).then(() => {
-                    return res
-                        .status(200)
-                        .json({ success: true, message: "Message sent successfully" });
-                });
+
+                });;
+                return res
+                    .status(200)
+                    .json({ success: true, message: "Message sent successfully" });
             })
         } else {
             return res.status(400).json({ success: false, message: "Affiliate marketer or content creator should be true" });
