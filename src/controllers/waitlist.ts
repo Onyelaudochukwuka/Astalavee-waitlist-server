@@ -3,6 +3,13 @@ require("dotenv").config();
 import type { Request, Response } from "express";
 import { ValidationError, validationResult } from "express-validator";
 import { Waitlist } from "../model/Waitlist";
+import sgMail from "@sendgrid/mail";
+const sendGridApiKey = process.env.SENDGRID_API_KEY;
+if (!sendGridApiKey) {
+    throw new Error("sendgridkey missing missing");
+}
+sgMail.setApiKey(sendGridApiKey);
+
 interface Res {
     message: string;
     success: boolean;
@@ -36,9 +43,6 @@ exports.joinWaitlist = async (req: Request<Req>, res: Response<Res>) => {
     }
     else {
         if (affiliateMarketer || contentCreator) {
-            const courier = CourierClient({
-                authorizationToken: process.env.COURIER_AUTH_TOKEN,
-            });
       const waitlist = await Waitlist.create({
                 name,
                 email,
