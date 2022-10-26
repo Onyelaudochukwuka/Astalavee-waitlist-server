@@ -30,31 +30,40 @@ exports.joinWaitlist = async (req: Request<Req>, res: Response<Res>) => {
             });
     }
     const { name, email, affiliateMarketer, contentCreator }: Req = req.body;
-    const courier = CourierClient({
-        authorizationToken: process.env.COURIER_AUTH_TOKEN,
-    });
-    const waitlist = await Waitlist.create({
-        name,
-        email,
-        affiliateMarketer,
-        contentCreator,
-    });
-    waitlist.save().then(async () => {
-        await courier.send({
-            message: {
-                to: {
-                    email
-                },
-                content: {
-                    title: "Waitlist confirmation",
-                    body: `Welcome to astalavee ${name}`,
-                },
-            },
-        }).then(() => {
-
-        });;
-        return res
-            .status(200)
-            .json({ success: true, message: "Message sent successfully" });
-    })
+    const wait = await Waitlist.find({ email });
+    if (wait.length > 0) {
+        return res.status(400).json({ success: false, message: "user already added to waitlist" });
+    }
+    else {
+        if (affiliateMarketer || contentCreator) {
+            const courier = CourierClient({
+                authorizationToken: process.env.COURIER_AUTH_TOKEN,
+            });
+      const waitlist = await Waitlist.create({
+                name,
+                email,
+                affiliateMarketer,
+                contentCreator,
+            });
+            waitlist.save().then(async () => {
+                await courier.send({
+                    message: {
+                        to: {
+                            email
+                        },
+                        content: {
+                            title: "Waitlist confirmation",
+                            body: `Welcome to astalavee ${name}`,
+                        },
+                    },
+                }).then(() => {
+                    return res
+                        .status(200)
+                        .json({ success: true, message: "Message sent successfully" });
+                });
+            })
+        } else {
+            return res.status(400).json({ success: false, message: "Affiliate marketer or content creator should be true" });
+        }
+    }
 };
